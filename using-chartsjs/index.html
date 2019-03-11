@@ -1,0 +1,134 @@
+<html>
+<!-- This is using parts of the data from index.js. Just hard coded values
+    *  The point is for display only. An API system to call and cache data would be needed. 
+-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+  <style>
+    .box {
+        border: 2px solid black;
+        border-radius: 5px;
+    }
+    .chart {
+      width:60% !important;
+      height:90% !important;
+    }
+
+  </style>
+</head>
+<body>
+  <div>
+    <p>These are sample charts based on market data.</p>
+    <p>These we built using the IDX Broker API endpoints:</p>
+    <ul>
+      <li>/mls/papprovedmls</li>
+      <li>/mls/propertytypes/</li>
+      <li>/mls/prices/</li>
+    </ul>
+    <p>Spcific cites and a saved link ID was also specified.</p>
+    <p>See index.js for an example of organizing the acquired data.</p>
+  </div>
+  <h1>
+    <div class="box"><i class="fas fa-home">
+      </i><span id="total"></span>
+    </div>
+  </h1>
+  <hr>
+  <canvas id="bar-chart" class="chart"></canvas>
+  <hr>
+  <canvas id="doughnut-chart" class="chart"></canvas>
+  <hr>
+  <canvas id="bar-chart-horizontal" class="chart"></canvas>
+  <script>
+    var data= { Residential: { count: '16888', sum: '8452502033' },
+      MultiFamily: { count: '478', sum: '321813138' },
+      Commercial: { count: '1055', sum: '775169891' },
+      'Lots And Land': { count: '6189', sum: '1897178000' },
+      proptTypeAverages:
+        [ { Residential: 500503.436345334 },
+          { MultiFamily: 673249.2426778242 },
+          { Commercial: 734758.190521327 },
+          { 'Lots And Land': 306540.31345936336 }
+        ],
+      citiesCounts:
+        [{ Portland: '3142', propType: [ 'Residential' ] },
+          { Portland: '339', propType: [ 'Lots And Land' ] },
+          { Portland: '160', propType: [ 'MultiFamily' ] },
+          { Portland: '130', propType: [ 'Commercial' ] },
+          { Eugene: '565', propType: [ 'Residential' ] },
+          { Eugene: '148', propType: [ 'Lots And Land' ] },
+          { Eugene: '32', propType: [ 'MultiFamily' ] },
+          { Eugene: '26', propType: [ 'Commercial' ] } ],
+      countiesCounts:
+        [{ Multnomah: '3079', propType: [ 'Residential' ] },
+          { Multnomah: '389', propType: [ 'Lots And Land' ] },
+          { Multnomah: '169', propType: [ 'MultiFamily' ] },
+          { Multnomah: '138', propType: [ 'Commercial' ] } 
+          ],
+        savedlinkresults: '13412',
+        mlsSum: '11446663062' };
+
+    // Bar chart
+    new Chart(document.getElementById("bar-chart"), {
+      type: 'bar',
+      data: {
+        labels: ["Portland", "Eugene"],
+        datasets: [
+          {
+            label: "Residential Available Proprties By City",
+            backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+            data: [data.citiesCounts[0].Portland, data.citiesCounts[4].Eugene]
+          }
+        ]
+      },
+      options: {
+        legend: { display: false },
+        title: {
+          display: true,
+          text: 'Residential Available Proprties By City'
+        }
+      }
+  });
+    new Chart(document.getElementById("doughnut-chart"), {
+      type: 'doughnut',
+      data: {
+        labels: ["Residential", "Lots And Land", "MultiFamily", "Commerciala"],
+        datasets: [
+          {
+            label: "Properties in Multnomah County by Property Type",
+            backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+            data: [data.countiesCounts[0].Multnomah,data.countiesCounts[1].Multnomah,data.countiesCounts[2].Multnomah,data.countiesCounts[3].Multnomah]
+          }
+        ]
+      },
+      options: {
+        title: {
+          display: true,
+          text: 'Properties in Multnomah County by Property Type'
+        }
+      }
+  });
+    new Chart(document.getElementById("bar-chart-horizontal"), {
+      type: 'horizontalBar',
+      data: {
+        labels: ["Residential", "MultiFamily", "Commercial", "Lots And Land"],
+        datasets: [
+          {
+            label: "Average Property Price By Property Type",
+            backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+            data: [data.proptTypeAverages[0].Residential,data.proptTypeAverages[1].MultiFamily,data.proptTypeAverages[2].Commercial,data.proptTypeAverages[3]["Lots And Land"]]
+          }
+        ]
+      },
+      options: {
+        legend: { display: false },
+        title: {
+          display: true,
+          text: 'Average Property Price By Property Type'
+        }
+      }
+  });
+    document.querySelector('#total').innerHTML= 'Total Properties active in the MLS: '+ data.mlsSum;
+  </script>
+</body>
+</html>
